@@ -1,4 +1,4 @@
-{
+const data = {
   "pay_run": {
     "id": "PR123456",
     "date": "2024-05-30",
@@ -339,3 +339,5 @@
     ]
   }
 }
+
+export default data;

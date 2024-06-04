@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import themes from '../../../themes/themes';
+import themes from '../../themes/themes';
 
 const breakpoints = {
   desktop: '1025px',
