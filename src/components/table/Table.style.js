@@ -7,13 +7,24 @@ const breakpoints = {
   smartphone: '576px',
 };
 
+export const Box = styled.div`
+  display: flex;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  flex-direction: row;
+  width: 100%;
+  @media (max-width: 680px) {
+  }
+`
+
 export const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: ${themes.whiteBackground};
-  overflow: hidden;  // Remove scroll from here
+  overflow: hidden;  
 
   @media (min-width: ${breakpoints.desktop}) {
     width: 80%;
@@ -56,7 +67,7 @@ export const TableInvoice = styled.table`
     background-color: ${themes.homeBackground};
     color: white;
     font-weight: bold;
-    position: sticky;
+
     top: 0; 
     z-index: 1; 
   }
@@ -86,4 +97,89 @@ export const TableBody = styled.tbody`
   tr:hover {
     background-color: #f1f1f1;
   }
+`;
+
+
+export const PayButton = styled.button`
+  padding: 0.5rem 1rem;
+  background-color: ${themes.button};
+  color: ${themes.buttonText};
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${themes.hoverButton};
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    background-color: ${themes.hoverButton};
+  }
+`;
+
+export const CancelButton = styled(PayButton)`
+  background-color: ${themes.button2};
+  border: 1px solid ${themes.button};
+  color: ${themes.button};
+  margin-right: 0.5rem;
+
+  &:hover {
+    color: ${themes.hoverButton};
+    border-color: ${themes.hoverButton};
+  }
+
+  &:active {
+    color: ${themes.buttonText};
+  }
+`;
+
+export const IconButton = styled(CancelButton)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  padding: 0.5rem;
+
+  &:active {
+    color: ${themes.buttonText};
+  }
+`;
+
+
+
+export const FilterWrapper = styled.div`
+  display: flex;
+  background-color: #fff;
+  padding: 2rem;
+  margin-top: 1.5rem;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+  width: 70%;
+  height: 100%;
+`;
+
+export const InputWrappers = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+`
+
+export const StyledInput = styled.input`
+  height: 40px; 
+  padding: 0 10px;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 `;

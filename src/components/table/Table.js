@@ -1,18 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import { CardWrapper } from "./Table.style";
 import data from "../../mockData/pay-run";
-import { TableInvoice, TableHeader, TableBody, TableContainer } from "./Table.style";
+import {
+  TableInvoice,
+  TableHeader,
+  TableBody,
+  TableContainer,
+  Box,
+  PayButton,
+  CancelButton,
+  FilterWrapper,
+  InputWrappers,
+  StyledInput,
+  IconButton
+} from "./Table.style";
+
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import FilterAltOffOutlinedIcon from '@mui/icons-material/FilterAltOffOutlined';
 
 const Table = () => {
   const [filters, setFilters] = useState({
-    maxAmount: '',
-    dueDate: '',
-    supplier: '',
-    postedDate: '',
+    maxAmount: "",
+    dueDate: "",
+    supplier: "",
+    postedDate: "",
+    invoiceNumbers: [],
   });
 
   const [unpaidInvoices, setUnpaidInvoices] = useState(data.pay_run.invoices);
   const [paidInvoices, setPaidInvoices] = useState([]);
+  const [allSuppliers, setAllSuppliers] = useState([]);
+  const [excludedSuppliers, setExcludedSuppliers] = useState([]);
+  const [showFilter, setShowFilter] = useState(false)
+
+  useEffect(() => {
+    // Extracting unique suppliers from the invoice data
+    const suppliers = Array.from(
+      new Set(data.pay_run.invoices.map((invoice) => invoice.supplier))
+    );
+    setAllSuppliers(
+      suppliers.map((supplier) => ({ value: supplier, label: supplier }))
+    );
+  }, []);
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
@@ -22,77 +52,178 @@ const Table = () => {
     });
   };
 
+  const handleInvoiceNumberChange = (selectedOptions) => {
+    setFilters({
+      ...filters,
+      invoiceNumbers: selectedOptions || [],
+    });
+  };
+
+  const handleExcludeSupplierChange = (selectedOptions) => {
+    const excludedSuppliers = selectedOptions.map((option) => option.value);
+    setExcludedSuppliers(excludedSuppliers);
+  };
+
   const filterInvoices = (invoices) => {
     return invoices.filter((invoice) => {
-      const maxAmountFilter = filters.maxAmount ? invoice.amount <= parseFloat(filters.maxAmount) : true;
-      const dueDateFilter = filters.dueDate ? new Date(invoice.due_date) <= new Date(filters.dueDate) : true;
-      const supplierFilter = filters.supplier ? invoice.supplier.toLowerCase().includes(filters.supplier.toLowerCase()) : true;
-      const postedDateFilter = filters.postedDate ? new Date(invoice.posted_date) <= new Date(filters.postedDate) : true;
+      const maxAmountFilter = filters.maxAmount
+        ? invoice.amount <= parseFloat(filters.maxAmount)
+        : true;
+      const dueDateFilter = filters.dueDate
+        ? new Date(invoice.due_date) <= new Date(filters.dueDate)
+        : true;
+      const supplierFilter = filters.supplier
+        ? invoice.supplier
+            .toLowerCase()
+            .includes(filters.supplier.toLowerCase())
+        : true;
+      const postedDateFilter = filters.postedDate
+        ? new Date(invoice.posted_date) <= new Date(filters.postedDate)
+        : true;
+      const invoiceNumberFilter =
+        filters.invoiceNumbers.length > 0
+          ? filters.invoiceNumbers.some(
+              (opt) => opt.value === invoice.invoice_number
+            )
+          : true;
+      const excludeSupplierFilter =
+        excludedSuppliers.length > 0
+          ? !excludedSuppliers.includes(invoice.supplier)
+          : true;
 
-      return maxAmountFilter && dueDateFilter && supplierFilter && postedDateFilter;
+      return (
+        maxAmountFilter &&
+        dueDateFilter &&
+        supplierFilter &&
+        postedDateFilter &&
+        invoiceNumberFilter &&
+        excludeSupplierFilter
+      );
     });
   };
 
   const handlePayAll = () => {
     const filteredInvoices = filterInvoices(unpaidInvoices);
     setPaidInvoices([...paidInvoices, ...filteredInvoices]);
-    setUnpaidInvoices(unpaidInvoices.filter(invoice => !filteredInvoices.includes(invoice)));
-    // Optionally, reset the filters after paying the invoices
+    setUnpaidInvoices(
+      unpaidInvoices.filter((invoice) => !filteredInvoices.includes(invoice))
+    );
     setFilters({
-      maxAmount: '',
-      dueDate: '',
-      supplier: '',
-      postedDate: '',
+      maxAmount: "",
+      dueDate: "",
+      supplier: "",
+      postedDate: "",
+      invoiceNumbers: [],
     });
+    setExcludedSuppliers([]);
   };
 
-  console.log("unpaid invoices", unpaidInvoices.length)
-  console.log('paid invoices', paidInvoices.length)
+  const handleFilterShow = () => {
+    setShowFilter(!showFilter)
+  }
+
+  const handleResetFilters = () => {
+    setFilters({
+      maxAmount: "",
+      dueDate: "",
+      supplier: "",
+      postedDate: "",
+      invoiceNumbers: [],
+    });
+    setExcludedSuppliers([]);
+  };
+
+  const customSelectStyles = {
+    container: (provided) => ({
+      ...provided,
+      width: "100%",
+    }),
+  };
 
   return (
     <CardWrapper>
-      <div style={{ margin: '1rem' }}>
-        <label>
-          Max Amount: 
-          <input 
-            type="number" 
-            name="maxAmount"
-            value={filters.maxAmount} 
-            onChange={handleFilterChange} 
-            style={{ marginLeft: '0.5rem', marginRight: '1rem' }} 
+      {showFilter && (
+        <FilterWrapper>
+        <Box>
+          <InputWrappers>
+            <p>Due Date Before: </p>
+            <StyledInput
+              type="date"
+              name="dueDate"
+              value={filters.dueDate}
+              onChange={handleFilterChange}
+              style={{marginRight: '0.5rem'}}
+            />
+          </InputWrappers>
+          <InputWrappers>
+            <p>Posted Date Before:</p>
+
+            <StyledInput
+              type="date"
+              name="postedDate"
+              value={filters.postedDate}
+              onChange={handleFilterChange}
+            />
+          </InputWrappers>
+        </Box>
+        <InputWrappers>
+            <p>Max Amount:</p>
+            <StyledInput
+              type="number"
+              name="maxAmount"
+              value={filters.maxAmount}
+              onChange={handleFilterChange}
+            />
+          </InputWrappers>
+        <InputWrappers>
+          <p>Invoice Numbers:</p>
+          <Select
+            isMulti
+            name="invoiceNumbers"
+            options={unpaidInvoices.map((invoice) => ({
+              value: invoice.invoice_number,
+              label: invoice.invoice_number,
+            }))}
+            classNamePrefix="select"
+            value={filters.invoiceNumbers}
+            onChange={handleInvoiceNumberChange}
+            styles={customSelectStyles}
           />
-        </label>
-        <label>
-          Due Date Before: 
-          <input 
-            type="date" 
-            name="dueDate"
-            value={filters.dueDate} 
-            onChange={handleFilterChange} 
-            style={{ marginLeft: '0.5rem', marginRight: '1rem' }} 
-          />
-        </label>
-        <label>
-          Supplier: 
-          <input 
-            type="text" 
+        </InputWrappers>
+
+        <InputWrappers>
+          <p>Include Supplier: </p>
+          <Select
             name="supplier"
-            value={filters.supplier} 
-            onChange={handleFilterChange} 
-            style={{ marginLeft: '0.5rem', marginRight: '1rem' }} 
+            options={allSuppliers}
+            value={allSuppliers.filter((opt) => opt.value === filters.supplier)}
+            onChange={(selectedOption) =>
+              setFilters({
+                ...filters,
+                supplier: selectedOption ? selectedOption.value : "",
+              })
+            }
+            styles={customSelectStyles}
           />
-        </label>
-        <label>
-          Posted Date Before: 
-          <input 
-            type="date" 
-            name="postedDate"
-            value={filters.postedDate} 
-            onChange={handleFilterChange} 
-            style={{ marginLeft: '0.5rem' }} 
+        </InputWrappers>
+
+        <InputWrappers>
+          <p>Exclude Supplier: </p>
+          <Select
+            isMulti
+            name="excludeSupplier"
+            options={allSuppliers}
+            value={allSuppliers.filter((opt) =>
+              excludedSuppliers.includes(opt.value)
+            )}
+            onChange={handleExcludeSupplierChange}
+            styles={customSelectStyles}
           />
-        </label>
-      </div>
+        </InputWrappers>
+      </FilterWrapper>
+      )}
+      
+
       <TableContainer>
         <TableInvoice>
           <TableHeader>
@@ -102,28 +233,31 @@ const Table = () => {
               <th>Status</th>
               <th>Posted Date</th>
               <th>Due Date</th>
-              <th>Invoice number</th>
+              <th>Invoice Number</th>
             </tr>
           </TableHeader>
           <TableBody>
             {filterInvoices(unpaidInvoices).map((invoice) => (
               <tr key={invoice.id}>
                 <td>{invoice.supplier}</td>
-                <td>{invoice.amount}</td>
+                <td>{"£" + invoice.amount}</td>
                 <td>{invoice.status}</td>
                 <td>{invoice.posted_date}</td>
                 <td>{invoice.due_date}</td>
                 <td>{invoice.invoice_number}</td>
-
               </tr>
             ))}
           </TableBody>
         </TableInvoice>
       </TableContainer>
-      <div style={{ margin: '1rem', textAlign: 'center' }}>
-        <button onClick={handlePayAll} style={{ padding: '0.5rem 1rem', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-          Pay All
-        </button>
+      <div style={{ display: 'flex', margin: "0rem", textAlign: "center" }}>
+        {showFilter ? (
+          <IconButton onClick={handleFilterShow}><FilterAltOffOutlinedIcon /></IconButton>
+        ) : (
+          <IconButton onClick={handleFilterShow}><FilterAltOutlinedIcon /></IconButton>
+        )}
+        <CancelButton onClick={handleResetFilters}>Reset filters</CancelButton>
+        <PayButton onClick={handlePayAll}>Pay All</PayButton>
       </div>
     </CardWrapper>
   );

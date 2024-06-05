@@ -3,11 +3,12 @@ const themes = {
   homeBackground: "#5515a6",
   whiteBackground: "#f8f9ff",
   cardBackground: "#ffffff",
-  button1: "#351d74",
-  button2: "#291056",
-  button_text1: "#351271",
-  button_text2: "#290e5a",
-  logoText: "#482b74"
+  button: "#0098ff",
+  hoverButton: "#0082da",
+  button2: "#f2f9ff",
+  buttonText: "#f2f9ff",
+  logoText: "#482b74",
+  pinkText: "#eb3fc7"
 }
 
 export default themes;
