@@ -66,31 +66,21 @@ const Table = () => {
 
   const filterInvoices = (invoices) => {
     return invoices.filter((invoice) => {
-      const maxAmountFilter = filters.maxAmount
-        ? invoice.amount <= parseFloat(filters.maxAmount)
+      const { maxAmount, dueDate, supplier, postedDate, invoiceNumbers } = filters;
+  
+      const maxAmountFilter = maxAmount ? invoice.amount <= parseFloat(maxAmount) : true;
+      const dueDateFilter = dueDate ? new Date(invoice.due_date) <= new Date(dueDate) : true;
+      const supplierFilter = supplier
+        ? invoice.supplier.toLowerCase().includes(supplier.toLowerCase())
         : true;
-      const dueDateFilter = filters.dueDate
-        ? new Date(invoice.due_date) <= new Date(filters.dueDate)
+      const postedDateFilter = postedDate ? new Date(invoice.posted_date) <= new Date(postedDate) : true;
+      const invoiceNumberFilter = invoiceNumbers.length > 0
+        ? invoiceNumbers.some(opt => opt.value === invoice.invoice_number)
         : true;
-      const supplierFilter = filters.supplier
-        ? invoice.supplier
-            .toLowerCase()
-            .includes(filters.supplier.toLowerCase())
+      const excludeSupplierFilter = excludedSuppliers.length > 0
+        ? !excludedSuppliers.includes(invoice.supplier)
         : true;
-      const postedDateFilter = filters.postedDate
-        ? new Date(invoice.posted_date) <= new Date(filters.postedDate)
-        : true;
-      const invoiceNumberFilter =
-        filters.invoiceNumbers.length > 0
-          ? filters.invoiceNumbers.some(
-              (opt) => opt.value === invoice.invoice_number
-            )
-          : true;
-      const excludeSupplierFilter =
-        excludedSuppliers.length > 0
-          ? !excludedSuppliers.includes(invoice.supplier)
-          : true;
-
+  
       return (
         maxAmountFilter &&
         dueDateFilter &&
@@ -101,6 +91,8 @@ const Table = () => {
       );
     });
   };
+
+  
 
   const handlePayAll = () => {
     const filteredInvoices = filterInvoices(unpaidInvoices);
@@ -140,6 +132,26 @@ const Table = () => {
     }),
   };
 
+  const convertDate = (dateStr)  => {
+  
+    let parts = dateStr.split("-");
+    let dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+    let day = dateObj.getDate();
+    let month = dateObj.getMonth() + 1;
+    let year = dateObj.getFullYear();
+    let formattedDay = day < 10 ? "0" + day : day;
+    let formattedMonth = month < 10 ? "0" + month : month;
+
+    let formattedDate = formattedDay + "/" + formattedMonth + "/" + year;
+    
+    return formattedDate;
+}
+
+
+console.log("paid invoices:",paidInvoices)
+console.log("unpaid invoices:",unpaidInvoices)
+
+
   return (
     <CardWrapper>
       {showFilter && (
@@ -167,7 +179,7 @@ const Table = () => {
           </InputWrappers>
         </Box>
         <InputWrappers>
-            <p>Max Amount:</p>
+            <p>Maximum Invoice Amount:</p>
             <StyledInput
               type="number"
               name="maxAmount"
@@ -192,7 +204,7 @@ const Table = () => {
         </InputWrappers>
 
         <InputWrappers>
-          <p>Include Supplier: </p>
+          <p>Select Single Supplier: </p>
           <Select
             name="supplier"
             options={allSuppliers}
@@ -208,7 +220,7 @@ const Table = () => {
         </InputWrappers>
 
         <InputWrappers>
-          <p>Exclude Supplier: </p>
+          <p>Exclude Supplier&#40;s&#41;: </p>
           <Select
             isMulti
             name="excludeSupplier"
@@ -240,24 +252,25 @@ const Table = () => {
             {filterInvoices(unpaidInvoices).map((invoice) => (
               <tr key={invoice.id}>
                 <td>{invoice.supplier}</td>
-                <td>{"£" + invoice.amount}</td>
+                <td>{"£" + invoice.amount.toLocaleString()}</td> 
+                {/* toLocaleString to add a coma in the thousands */}
                 <td>{invoice.status}</td>
-                <td>{invoice.posted_date}</td>
-                <td>{invoice.due_date}</td>
+                <td>{convertDate(invoice.posted_date)}</td>
+                <td>{convertDate(invoice.due_date)}</td>
                 <td>{invoice.invoice_number}</td>
               </tr>
             ))}
           </TableBody>
         </TableInvoice>
       </TableContainer>
-      <div style={{ display: 'flex', margin: "0rem", textAlign: "center" }}>
+      <div style={{ display: 'flex', textAlign: "center", margin: '0.5rem 0' }}>
         {showFilter ? (
           <IconButton onClick={handleFilterShow}><FilterAltOffOutlinedIcon /></IconButton>
         ) : (
           <IconButton onClick={handleFilterShow}><FilterAltOutlinedIcon /></IconButton>
         )}
         <CancelButton onClick={handleResetFilters}>Reset filters</CancelButton>
-        <PayButton onClick={handlePayAll}>Pay All</PayButton>
+        <PayButton onClick={handlePayAll}>Pay Invoices</PayButton>
       </div>
     </CardWrapper>
   );

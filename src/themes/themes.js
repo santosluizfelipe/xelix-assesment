@@ -8,7 +8,10 @@ const themes = {
   button2: "#f2f9ff",
   buttonText: "#f2f9ff",
   logoText: "#482b74",
-  pinkText: "#eb3fc7"
+  table: {
+    background: "#f9f9f9",
+    hoverBackground: "#f1f1f1"
+  }
 }
 
 export default themes;

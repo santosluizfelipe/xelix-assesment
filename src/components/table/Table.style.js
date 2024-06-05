@@ -50,6 +50,7 @@ export const CardWrapper = styled.div`
 export const TableContainer = styled.div`
   width: 100%;
   overflow: auto;
+  font-family: Arial, Helvetica, sans-serif;
 `;
 
 export const TableInvoice = styled.table`
@@ -60,7 +61,7 @@ export const TableInvoice = styled.table`
   th, td {
     border: 1px solid #ddd;
     padding: 8px;
-    text-align: left;
+    text-align: center;
   }
 
   th {
@@ -73,29 +74,34 @@ export const TableInvoice = styled.table`
   }
 
   tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: ${themes.table.background};
   }
 
   tr:hover {
-    background-color: #f1f1f1;
+    background-color: ${themes.table.hoverBackground};
   }
 `;
 
 export const TableHeader = styled.thead`
+  font-size: 15px;
+
+  
   tr {
     background-color: ${themes.primaryColor};
     color: white;
-    text-align: left;
+    text-align: center;
   }
 `;
 
 export const TableBody = styled.tbody`
+  font-size: 14px;
+
   tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: ${themes.table.background};
   }
 
   tr:hover {
-    background-color: #f1f1f1;
+    background-color: ${themes.table.hoverBackground};
   }
 `;
 
@@ -109,7 +115,10 @@ export const PayButton = styled.button`
   cursor: pointer;
   transition: background-color 0.3s;
 
-  &:hover {
+
+
+ 
+    &:hover {
     background-color: ${themes.hoverButton};
   }
 
@@ -120,6 +129,7 @@ export const PayButton = styled.button`
   &:active {
     background-color: ${themes.hoverButton};
   }
+
 `;
 
 export const CancelButton = styled(PayButton)`
@@ -128,14 +138,18 @@ export const CancelButton = styled(PayButton)`
   color: ${themes.button};
   margin-right: 0.5rem;
 
+
+  @media (min-width: 680px) {
   &:hover {
-    color: ${themes.hoverButton};
-    border-color: ${themes.hoverButton};
+    color: ${themes.buttonText};
+    border-color: ${themes.buttonText};
+    background-color: ${themes.button};
   }
 
   &:active {
     color: ${themes.buttonText};
   }
+}
 `;
 
 export const IconButton = styled(CancelButton)`
@@ -155,7 +169,7 @@ export const IconButton = styled(CancelButton)`
 
 export const FilterWrapper = styled.div`
   display: flex;
-  background-color: #fff;
+  background-color: ${themes.cardBackground};
   padding: 2rem;
   margin-top: 1.5rem;
   border-radius: 15px;
@@ -164,6 +178,7 @@ export const FilterWrapper = styled.div`
   flex-direction: column;
   width: 70%;
   height: 100%;
+
 `;
 
 export const InputWrappers = styled.div`
