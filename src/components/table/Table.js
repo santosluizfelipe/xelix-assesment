@@ -6,11 +6,7 @@ import InvoiceTable from "./InvoiceTable";
 import FilterIconButton from "./FilterIconButton";
 
 import { convertDate } from "../utils/utils";
-
 import { PayButton, CancelButton, IconButton } from "./Table.style";
-
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 
 const Table = () => {
   const [filters, setFilters] = useState({

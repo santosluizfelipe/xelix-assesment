@@ -43,8 +43,12 @@ const InvoiceTable = ({ unpaidInvoices, filterInvoices, convertDate }) => {
             </tr>
           ))}
           <tr>
-            <td><strong>Total</strong></td>
-            <td><strong>{"£" + totalAmount.toLocaleString()}</strong></td>
+            <td>
+              <strong>Total</strong>
+            </td>
+            <td>
+              <strong>{"£" + totalAmount.toLocaleString()}</strong>
+            </td>
             <td>-</td>
             <td>-</td>
             <td>-</td>
