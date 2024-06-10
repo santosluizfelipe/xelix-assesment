@@ -3,6 +3,7 @@ import { CardWrapper } from "./Table.style";
 import data from "../../mockData/pay-run";
 import InvoiceFilter from "./InvoiceFilter";
 import InvoiceTable from "./InvoiceTable";
+import FilterIconButton from "./FilterIconButton";
 
 import { convertDate } from "../utils/utils";
 
@@ -157,15 +158,7 @@ const Table = () => {
         convertDate={convertDate}
       />
       <div style={{ display: "flex", textAlign: "center", margin: "0.5rem 0" }}>
-        {showFilter ? (
-          <IconButton onClick={handleFilterShow}>
-            <FilterAltOffOutlinedIcon />
-          </IconButton>
-        ) : (
-          <IconButton onClick={handleFilterShow}>
-            <FilterAltOutlinedIcon />
-          </IconButton>
-        )}
+         <FilterIconButton showFilter={showFilter} handleFilterShow={handleFilterShow} />
         <CancelButton onClick={handleResetFilters}>Reset filters</CancelButton>
         <PayButton onClick={handlePayAll}>Pay Invoices</PayButton>
       </div>

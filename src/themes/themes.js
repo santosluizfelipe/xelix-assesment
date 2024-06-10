@@ -1,6 +1,7 @@
 const themes = {
   navBackground: "#2e0a5e",
-  homeBackground: "#5515a6",
+  homeBackground: "#451289",
+  transitionBackground: "#150732",
   whiteBackground: "#f8f9ff",
   cardBackground: "#ffffff",
   button: "#0098ff",

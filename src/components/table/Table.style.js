@@ -48,9 +48,12 @@ export const CardWrapper = styled.div`
 `;
 
 export const TableContainer = styled.div`
+  display: flex;
+  flex-direction: row;
   width: 100%;
   overflow: auto;
   font-family: Arial, Helvetica, sans-serif;
+
 `;
 
 export const TableInvoice = styled.table`

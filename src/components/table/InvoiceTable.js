@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   TableInvoice,
@@ -8,6 +7,17 @@ import {
 } from "./Table.style";
 
 const InvoiceTable = ({ unpaidInvoices, filterInvoices, convertDate }) => {
+  const filteredInvoices = filterInvoices(unpaidInvoices);
+
+  const sortedInvoices = filteredInvoices.sort((a, b) => {
+    return a.supplier.localeCompare(b.supplier);
+  });
+
+  const totalAmount = sortedInvoices.reduce(
+    (total, invoice) => total + invoice.amount,
+    0
+  );
+
   return (
     <TableContainer>
       <TableInvoice>
@@ -22,7 +32,7 @@ const InvoiceTable = ({ unpaidInvoices, filterInvoices, convertDate }) => {
           </tr>
         </TableHeader>
         <TableBody>
-          {filterInvoices(unpaidInvoices).map((invoice) => (
+          {sortedInvoices.map((invoice) => (
             <tr key={invoice.id}>
               <td>{invoice.supplier}</td>
               <td>{"£" + invoice.amount.toLocaleString()}</td>
@@ -32,6 +42,14 @@ const InvoiceTable = ({ unpaidInvoices, filterInvoices, convertDate }) => {
               <td>{invoice.invoice_number}</td>
             </tr>
           ))}
+          <tr>
+            <td><strong>Total</strong></td>
+            <td><strong>{"£" + totalAmount.toLocaleString()}</strong></td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
         </TableBody>
       </TableInvoice>
     </TableContainer>
